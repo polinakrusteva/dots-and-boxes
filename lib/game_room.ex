@@ -1,5 +1,6 @@
 defmodule DotsAndBoxes.Room do
+  alias DotsAndBoxes.Board
 
-  defstruct game_name: "default_name", players: [], players_count: 0
+  defstruct [ :board, game_name: "default_name", players: [], players_count: 0 ]
 
 end

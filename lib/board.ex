@@ -19,11 +19,11 @@ defmodule DotsAndBoxes.Board do
     has_right(board,get_at(board.board,i,j)) == false
   end
 
-  def is_turn_possible(board, i, j, :top) do
+  def is_turn_possible(board, i, j, :up) do
     has_top(board,get_at(board.board,i,j)) == false
   end
 
-  def is_turn_possible(board, i, j, :bottom) do
+  def is_turn_possible(board, i, j, :down) do
     has_bottom(board,get_at(board.board,i,j)) == false
   end
 
@@ -39,11 +39,11 @@ defmodule DotsAndBoxes.Board do
     update_value(board, i, j, :math.pow(2,1))
   end
 
-  def make_turn(board, i, j, :bottom) do
+  def make_turn(board, i, j, :down) do
     update_value(board, i, j, :math.pow(2,2))
   end
 
-  def make_turn(board, i, j, :top) do
+  def make_turn(board, i, j, :up) do
     update_value(board, i, j, :math.pow(2,0))
   end
 
