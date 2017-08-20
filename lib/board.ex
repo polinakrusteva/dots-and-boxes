@@ -27,10 +27,6 @@ defmodule DotsAndBoxes.Board do
     has_bottom(board,get_at(board.board,i,j)) == false
   end
 
-  """
-  TODO: add validation is_turn_possible
-  and update when square is created
-  """
   def make_turn(board, i, j, :left) do
     update_value(board, i, j, round(:math.pow(2,3)))
   end
@@ -58,31 +54,52 @@ defmodule DotsAndBoxes.Board do
     board |> Enum.at(i) |> Enum.at(j)
   end
 
-  defp get_binary_value(number) do
+  defp integer_to_binary(number) do
     Integer.to_string(number,2)
   end
 
-  """
-    TODO: Add logic if it has 5 bits(square completed)
-  """
-  defp has_left(board, value)  do
-    String.to_integer(binary_part(get_binary_value(value), 0, 1)) == 1
+  def get_binary_value(number) do
+    binary_number = integer_to_binary(number)
+    zeroes = 8 - Kernel.byte_size(binary_number)
+    String.duplicate("0",zeroes) <> binary_number
   end
 
-  defp has_right(board, value)  do
-    String.to_integer(binary_part(get_binary_value(value), 2, 1)) == 1
+  defp has_left(board, value) do
+    String.to_integer(binary_part(get_binary_value(value), 4, 1)) == 1
   end
 
-  defp has_top(board, value)  do
-    String.to_integer(binary_part(get_binary_value(value), 3, 1)) == 1
+  defp has_right(board, value) do
+    String.to_integer(binary_part(get_binary_value(value), 6, 1)) == 1
   end
 
-  defp has_bottom(board, value)  do
-    String.to_integer(binary_part(get_binary_value(value), 1, 1)) == 1
+  defp has_top(board, value) do
+    String.to_integer(binary_part(get_binary_value(value), 7, 1)) == 1
+  end
+
+  defp has_bottom(board, value) do
+    String.to_integer(binary_part(get_binary_value(value), 5, 1)) == 1
   end
 
   def is_square(board, value) do
     has_left(board, value) && has_right(board, value) && has_top(board, value) && has_bottom(board, value)
+  end
+
+  def print_board(board) do
+    for i <- board.board do
+      for j <- i do
+        cond do
+          has_top(board.board, j) && has_left(board.board, j) == false -> IO.puts "-"
+          has_top(board.board, j) && has_left(board.board, j) -> IO.puts "|-"
+          has_bottom(board.board, j) && has_right(board.board, j) == false -> IO.puts "_"
+          has_bottom(board.board, j) && has_right(board.board, j) -> IO.puts "_|"
+          true -> IO.puts "."
+        end
+      end
+    end
+  end
+
+  def is_game_over(board) do
+    length(Enum.filter(board.board, fn(x) -> x != 15 end)) == 0
   end
 
 end
