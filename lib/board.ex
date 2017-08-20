@@ -32,19 +32,19 @@ defmodule DotsAndBoxes.Board do
   and update when square is created
   """
   def make_turn(board, i, j, :left) do
-    update_value(board, i, j, :math.pow(2,3))
+    update_value(board, i, j, round(:math.pow(2,3)))
   end
 
   def make_turn(board, i, j, :right) do
-    update_value(board, i, j, :math.pow(2,1))
+    update_value(board, i, j, round(:math.pow(2,1)))
   end
 
   def make_turn(board, i, j, :down) do
-    update_value(board, i, j, :math.pow(2,2))
+    update_value(board, i, j, round(:math.pow(2,2)))
   end
 
   def make_turn(board, i, j, :up) do
-    update_value(board, i, j, :math.pow(2,0))
+    update_value(board, i, j, round(:math.pow(2,0)))
   end
 
   defp update_value(board, i, j, value) do
@@ -54,7 +54,7 @@ defmodule DotsAndBoxes.Board do
     %DotsAndBoxes.Board{size: board.size, board: new_board}
   end
 
-  defp get_at(board,i,j) do
+  def get_at(board,i,j) do
     board |> Enum.at(i) |> Enum.at(j)
   end
 
@@ -66,19 +66,19 @@ defmodule DotsAndBoxes.Board do
     TODO: Add logic if it has 5 bits(square completed)
   """
   defp has_left(board, value)  do
-    binary_part(get_binary_value(value), 0, 1) == 1
+    String.to_integer(binary_part(get_binary_value(value), 0, 1)) == 1
   end
 
   defp has_right(board, value)  do
-    binary_part(get_binary_value(value), 2, 1) == 1
+    String.to_integer(binary_part(get_binary_value(value), 2, 1)) == 1
   end
 
   defp has_top(board, value)  do
-    binary_part(get_binary_value(value), 3, 1) == 1
+    String.to_integer(binary_part(get_binary_value(value), 3, 1)) == 1
   end
 
   defp has_bottom(board, value)  do
-    binary_part(get_binary_value(value), 1, 1) == 1
+    String.to_integer(binary_part(get_binary_value(value), 1, 1)) == 1
   end
 
   def is_square(board, value) do
