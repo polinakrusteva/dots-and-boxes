@@ -5,6 +5,10 @@ defmodule DotsAndBoxes.Board do
   dimensional array
   """
 
+
+  """
+  TODO: fix print method
+  """
   defstruct [ size: 0, board: [[]] ]
 
   def init_board(size) do
@@ -99,7 +103,7 @@ defmodule DotsAndBoxes.Board do
   end
 
   def is_game_over(board) do
-    length(Enum.filter(board.board, fn(x) -> x != 15 end)) == 0
+    length(Enum.filter(List.flatten(Matrix.to_list(board.board)), fn(x) -> x != 15 end)) == 0
   end
 
 end

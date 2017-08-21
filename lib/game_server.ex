@@ -4,7 +4,9 @@ defmodule GameServer do
   alias DotsAndBoxes.Room
 
   """
-  TODO: add point scoring and winner logic messages
+  TODO: Create start game function so that game Server
+  supports more than one game at a time
+  TODO: Add global ranklist with point per victory
   """
 
   def start_link(state) do
@@ -58,7 +60,7 @@ defmodule GameServer do
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
         if(DotsAndBoxes.Board.is_game_over(new_board)) do
-          {:reply, {:game_over, points}, new_state}
+          {:reply, {:game_over, new_points}, new_state}
         else
           {:reply, {:square_created, new_state}, new_state}
         end
@@ -79,7 +81,7 @@ defmodule GameServer do
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
         if(DotsAndBoxes.Board.is_game_over(new_board)) do
-          {:reply, {:game_over, points}, new_state}
+          {:reply, {:game_over, new_points}, new_state}
         else
           {:reply, {:square_created, new_state}, new_state}
         end
@@ -100,7 +102,7 @@ defmodule GameServer do
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
         if(DotsAndBoxes.Board.is_game_over(new_board)) do
-          {:reply, {:game_over, points}, new_state}
+          {:reply, {:game_over, new_points}, new_state}
         else
           {:reply, {:square_created, new_state}, new_state}
         end
@@ -121,7 +123,7 @@ defmodule GameServer do
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
         if(DotsAndBoxes.Board.is_game_over(new_board)) do
-          {:reply, {:game_over, points}, new_state}
+          {:reply, {:game_over, new_points}, new_state}
         else
           {:reply, {:square_created, new_state}, new_state}
         end
@@ -134,9 +136,9 @@ defmodule GameServer do
     end
   end
 
-  def get_winner({:get_winner}, _from, %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
+  def handle_call({:get_winner}, _from, %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
     winner = points |> Enum.max_by(&(elem(&1,1)))
-    {:reply, {:game_over, winner}, state}
+    {:reply, {:ok, winner}, state}
   end
 
 end
