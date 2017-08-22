@@ -1,7 +1,7 @@
-defmodule GameServer do
+defmodule DotsAndBoxes.Game.GameServer do
   use GenServer
-  alias DotsAndBoxes.Board
-  alias DotsAndBoxes.Room
+  alias DotsAndBoxes.Game.Board
+  alias DotsAndBoxes.Game.Room
 
   """
   TODO: Create start game function so that game Server
@@ -11,10 +11,6 @@ defmodule GameServer do
 
   def start_link(state) do
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
-  end
-
-  def init(state) do
-    {:ok, state}
   end
 
   def join(pid, player) do
@@ -53,13 +49,13 @@ defmodule GameServer do
   end
 
   def handle_call({:move_left, row, column, player}, _from,  %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
-    if(DotsAndBoxes.Board.is_turn_possible(board, row, column, :left)) do
-      new_board = DotsAndBoxes.Board.make_turn(board, row, column, :left)
-      if(DotsAndBoxes.Board.is_square(new_board.board, DotsAndBoxes.Board.get_at(new_board.board, row, column))) do
+    if(Board.is_turn_possible(board, row, column, :left)) do
+      new_board = Board.make_turn(board, row, column, :left)
+      if(Board.is_square(new_board.board, Board.get_at(new_board.board, row, column))) do
         new_points = points
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
-        if(DotsAndBoxes.Board.is_game_over(new_board)) do
+        if(Board.is_game_over(new_board)) do
           {:reply, {:game_over, new_points}, new_state}
         else
           {:reply, {:square_created, new_state}, new_state}
@@ -74,13 +70,13 @@ defmodule GameServer do
   end
 
   def handle_call({:move_right, row, column, player}, _from,  %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
-    if(DotsAndBoxes.Board.is_turn_possible(board, row, column, :right)) do
-      new_board = DotsAndBoxes.Board.make_turn(board, row, column, :right)
-      if(DotsAndBoxes.Board.is_square(new_board.board, DotsAndBoxes.Board.get_at(new_board.board, row, column))) do
+    if(Board.is_turn_possible(board, row, column, :right)) do
+      new_board = Board.make_turn(board, row, column, :right)
+      if(Board.is_square(new_board.board, Board.get_at(new_board.board, row, column))) do
         new_points = points
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
-        if(DotsAndBoxes.Board.is_game_over(new_board)) do
+        if(Board.is_game_over(new_board)) do
           {:reply, {:game_over, new_points}, new_state}
         else
           {:reply, {:square_created, new_state}, new_state}
@@ -95,13 +91,13 @@ defmodule GameServer do
   end
 
   def handle_call({:move_up, row, column, player}, _from,  %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
-    if(DotsAndBoxes.Board.is_turn_possible(board, row, column, :up)) do
-      new_board = DotsAndBoxes.Board.make_turn(board, row, column, :up)
-      if(DotsAndBoxes.Board.is_square(new_board.board, DotsAndBoxes.Board.get_at(new_board.board, row, column))) do
+    if(Board.is_turn_possible(board, row, column, :up)) do
+      new_board = Board.make_turn(board, row, column, :up)
+      if(Board.is_square(new_board.board, Board.get_at(new_board.board, row, column))) do
         new_points = points
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
-        if(DotsAndBoxes.Board.is_game_over(new_board)) do
+        if(Board.is_game_over(new_board)) do
           {:reply, {:game_over, new_points}, new_state}
         else
           {:reply, {:square_created, new_state}, new_state}
@@ -116,13 +112,13 @@ defmodule GameServer do
   end
 
   def handle_call({:move_down, row, column, player}, _from,  %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
-    if(DotsAndBoxes.Board.is_turn_possible(board, row, column, :down)) do
-      new_board = DotsAndBoxes.Board.make_turn(board, row, column, :down)
-      if(DotsAndBoxes.Board.is_square(new_board.board, DotsAndBoxes.Board.get_at(new_board.board, row, column))) do
+    if(Board.is_turn_possible(board, row, column, :down)) do
+      new_board = Board.make_turn(board, row, column, :down)
+      if(Board.is_square(new_board.board, Board.get_at(new_board.board, row, column))) do
         new_points = points
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
-        if(DotsAndBoxes.Board.is_game_over(new_board)) do
+        if(Board.is_game_over(new_board)) do
           {:reply, {:game_over, new_points}, new_state}
         else
           {:reply, {:square_created, new_state}, new_state}

@@ -1,4 +1,4 @@
-defmodule DotsAndBoxes.Board do
+defmodule DotsAndBoxes.Game.Board do
   use Tensor
   @moduledoc """
   Represents the game board. It is a two
@@ -12,7 +12,7 @@ defmodule DotsAndBoxes.Board do
   defstruct [ size: 0, board: [[]] ]
 
   def init_board(size) do
-    %DotsAndBoxes.Board{size: size, board: Matrix.new(size, size)}
+    %DotsAndBoxes.Game.Board{size: size, board: Matrix.new(size, size)}
   end
 
   def is_turn_possible(board, i, j, :left) do
@@ -51,7 +51,7 @@ defmodule DotsAndBoxes.Board do
     new_value = get_at(board.board, i, j) + value
     new_board = board.board
     new_board = put_in(new_board, [i,j], new_value)
-    %DotsAndBoxes.Board{size: board.size, board: new_board}
+    %DotsAndBoxes.Game.Board{size: board.size, board: new_board}
   end
 
   def get_at(board,i,j) do
