@@ -1,5 +1,6 @@
 defmodule DotsAndBoxes.Game.Board do
   use Tensor
+  import CustomGuards, only: [is_position_valid: 3]
   @moduledoc """
   Represents the game board. It is a two
   dimensional array
@@ -16,19 +17,19 @@ defmodule DotsAndBoxes.Game.Board do
   end
 
   def is_turn_possible(board, i, j, :left) do
-    has_left(board,get_at(board.board,i,j)) == false
+    has_left(get_at(board.board,i,j)) == false
   end
 
   def is_turn_possible(board, i, j, :right) do
-    has_right(board,get_at(board.board,i,j)) == false
+    has_right(get_at(board.board,i,j)) == false
   end
 
   def is_turn_possible(board, i, j, :up) do
-    has_top(board,get_at(board.board,i,j)) == false
+    has_top(get_at(board.board,i,j)) == false
   end
 
   def is_turn_possible(board, i, j, :down) do
-    has_bottom(board,get_at(board.board,i,j)) == false
+    has_bottom(get_at(board.board,i,j)) == false
   end
 
   def make_turn(board, i, j, :left) do
@@ -47,7 +48,7 @@ defmodule DotsAndBoxes.Game.Board do
     update_value(board, i, j, round(:math.pow(2,0)))
   end
 
-  defp update_value(board, i, j, value) do
+  def update_value(board, i, j, value) do
     new_value = get_at(board.board, i, j) + value
     new_board = board.board
     new_board = put_in(new_board, [i,j], new_value)
@@ -68,34 +69,34 @@ defmodule DotsAndBoxes.Game.Board do
     String.duplicate("0",zeroes) <> binary_number
   end
 
-  defp has_left(board, value) do
+  def has_left(value) do
     String.to_integer(binary_part(get_binary_value(value), 4, 1)) == 1
   end
 
-  defp has_right(board, value) do
+  def has_right(value) do
     String.to_integer(binary_part(get_binary_value(value), 6, 1)) == 1
   end
 
-  defp has_top(board, value) do
+  def has_top(value) do
     String.to_integer(binary_part(get_binary_value(value), 7, 1)) == 1
   end
 
-  defp has_bottom(board, value) do
+  def has_bottom(value) do
     String.to_integer(binary_part(get_binary_value(value), 5, 1)) == 1
   end
 
-  def is_square(board, value) do
-    has_left(board, value) && has_right(board, value) && has_top(board, value) && has_bottom(board, value)
+  def is_square(value) do
+    has_left(value) && has_right(value) && has_top(value) && has_bottom(value)
   end
 
   def print_board(board) do
     for i <- board.board do
       for j <- i do
         cond do
-          has_top(board.board, j) && has_left(board.board, j) == false -> IO.puts "-"
-          has_top(board.board, j) && has_left(board.board, j) -> IO.puts "|-"
-          has_bottom(board.board, j) && has_right(board.board, j) == false -> IO.puts "_"
-          has_bottom(board.board, j) && has_right(board.board, j) -> IO.puts "_|"
+          has_top(j) && has_left(j) == false -> IO.puts "-"
+          has_top(j) && has_left(j) -> IO.puts "|-"
+          has_bottom(j) && has_right(j) == false -> IO.puts "_"
+          has_bottom(j) && has_right(j) -> IO.puts "_|"
           true -> IO.puts "."
         end
       end
