@@ -31,6 +31,10 @@ defmodule DotsAndBoxes do
     GenServer.call(GameServer, {:move_down, row, column, player})
   end
 
+  def print_board() do
+    GenServer.call(GameServer, {:print_board})
+  end
+
   def get_winner() do
     GenServer.call(GameServer, {:get_winner})
   end

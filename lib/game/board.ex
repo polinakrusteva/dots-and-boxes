@@ -1,6 +1,5 @@
 defmodule DotsAndBoxes.Game.Board do
   use Tensor
-  import CustomGuards, only: [is_position_valid: 3]
   @moduledoc """
   Represents the game board. It is a two
   dimensional array
@@ -14,6 +13,10 @@ defmodule DotsAndBoxes.Game.Board do
 
   def init_board(size) do
     %DotsAndBoxes.Game.Board{size: size, board: Matrix.new(size, size)}
+  end
+
+  def is_position_valid(size, i, j) do
+    i >= 0 and i < size and j >= 0 and j < size
   end
 
   def is_turn_possible(board, i, j, :left) do
@@ -89,22 +92,45 @@ defmodule DotsAndBoxes.Game.Board do
     has_left(value) && has_right(value) && has_top(value) && has_bottom(value)
   end
 
-  def print_board(board) do
-    for i <- board.board do
-      for j <- i do
-        cond do
-          has_top(j) && has_left(j) == false -> IO.puts "-"
-          has_top(j) && has_left(j) -> IO.puts "|-"
-          has_bottom(j) && has_right(j) == false -> IO.puts "_"
-          has_bottom(j) && has_right(j) -> IO.puts "_|"
-          true -> IO.puts "."
+  def is_game_over(board) do
+    length(Enum.filter(List.flatten(Matrix.to_list(board.board)), fn(x) -> x != 15 end)) == 0
+  end
+
+  def print_board(board, size) do
+    for i <- 0..Vector.length(Matrix.row(board.board,0))-1 do
+      IO.puts ""
+      IO.write "+"
+      for j <- 0..Vector.length(Matrix.column(board.board,0))-1 do
+        if(has_top(get_at(board.board, i, j))) do
+          IO.write "-"
+        else
+          IO.write " "
+        end
+        IO.write "+"
+      end
+      IO.puts ""
+      for j <- 0..Vector.length(Matrix.column(board.board,0))-1 do
+        if(has_left(get_at(board.board, i,j))) do
+          IO.write "|"
+        else
+          IO.write " "
+        end
+        IO.write " "
+        if(j == size - 1 && has_right(get_at(board.board,i,j))) do
+          IO.write "|"
         end
       end
     end
-  end
-
-  def is_game_over(board) do
-    length(Enum.filter(List.flatten(Matrix.to_list(board.board)), fn(x) -> x != 15 end)) == 0
+    #IO.write "+"
+    IO.puts ""
+    for j <- 0..Vector.length(Matrix.column(board.board,0))-1 do
+      if(has_bottom(get_at(board.board, j, size-1))) do
+        IO.write "_"
+      else
+        IO.write " "
+      end
+      IO.write " "
+    end
   end
 
 end

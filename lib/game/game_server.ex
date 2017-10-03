@@ -17,6 +17,10 @@ defmodule DotsAndBoxes.Game.GameServer do
     GenServer.call(pid, {:join, player})
   end
 
+  def print_board(pid) do
+    GenServer.call(pid, {:print_board})
+  end
+
   def move_left(pid, row, column, player) do
     GenServer.call(pid, {:move_left, row, column, player})
   end
@@ -51,7 +55,11 @@ defmodule DotsAndBoxes.Game.GameServer do
   def handle_call({:move_left, row, column, player}, _from,  %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
     if(Board.is_turn_possible(board, row, column, :left)) do
       new_board = Board.make_turn(board, row, column, :left)
-      if(Board.is_square(Board.get_at(new_board.board, row, column))) do
+      has_neighbour = Board.is_position_valid(board.size, row, column-1)
+      if(has_neighbour) do
+        new_board = Board.make_turn(new_board, row, column-1, :right)
+      end
+      if(Board.is_square(Board.get_at(new_board.board, row, column)) || (has_neighbour && Board.is_square(Board.get_at(new_board.board, row, column-1)))) do
         new_points = points
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
@@ -72,7 +80,11 @@ defmodule DotsAndBoxes.Game.GameServer do
   def handle_call({:move_right, row, column, player}, _from,  %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
     if(Board.is_turn_possible(board, row, column, :right)) do
       new_board = Board.make_turn(board, row, column, :right)
-      if(Board.is_square(Board.get_at(new_board.board, row, column))) do
+      has_neighbour = Board.is_position_valid(board.size, row, column+1)
+      if(has_neighbour) do
+        new_board = Board.make_turn(new_board, row, column+1, :left)
+      end
+      if(Board.is_square(Board.get_at(new_board.board, row, column)) || (has_neighbour && Board.is_square(Board.get_at(new_board.board, row, column+1)))) do
         new_points = points
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
@@ -93,7 +105,11 @@ defmodule DotsAndBoxes.Game.GameServer do
   def handle_call({:move_up, row, column, player}, _from,  %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
     if(Board.is_turn_possible(board, row, column, :up)) do
       new_board = Board.make_turn(board, row, column, :up)
-      if(Board.is_square(Board.get_at(new_board.board, row, column))) do
+      has_neighbour = Board.is_position_valid(board.size, row-1, column)
+      if(has_neighbour) do
+        new_board = Board.make_turn(new_board, row-1, column, :down)
+      end
+      if(Board.is_square(Board.get_at(new_board.board, row, column)) || ( has_neighbour && Board.is_square(Board.get_at(new_board.board, row-1,column)))) do
         new_points = points
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
@@ -114,7 +130,11 @@ defmodule DotsAndBoxes.Game.GameServer do
   def handle_call({:move_down, row, column, player}, _from,  %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
     if(Board.is_turn_possible(board, row, column, :down)) do
       new_board = Board.make_turn(board, row, column, :down)
-      if(Board.is_square(Board.get_at(new_board.board, row, column))) do
+      has_neighbour = Board.is_position_valid(board.size, row+1, column)
+      if(has_neighbour) do
+        new_board = Board.make_turn(new_board, row+1, column, :up)
+      end
+      if(Board.is_square(Board.get_at(new_board.board, row, column)) || ( has_neighbour && Board.is_square(Board.get_at(new_board.board, row+1, column)))) do
         new_points = points
         new_points = Keyword.update!(new_points, player, &(&1+1))
         new_state = %Room{ board: new_board, points: new_points, game_name: name, players: players, players_count: players_count}
@@ -137,4 +157,7 @@ defmodule DotsAndBoxes.Game.GameServer do
     {:reply, {:ok, winner}, state}
   end
 
+  def handle_call({:print_board}, _from, %{board: board, points: points, game_name: name, players: players, players_count: players_count} = state) do
+    {:reply, {:ok, Board.print_board(board, board.size)}, state}
+  end
 end
